@@ -2,48 +2,42 @@ import { motion } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {NestedAnimation,PageTransition} from '../../Screens/Animation'
-import {deleteproduct, listProduct} from '../../actions/productAction'
+import {getAllusers,deleteuser} from '../../actions/userAction'
+import Loader from '../utilities_/myloader'
 import Indicator from '../Indicator/indicator'
-import { Button, Row,Col,Table } from 'react-bootstrap'
+import { Button, Table,Row,Col } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
-import {ADMIN_EDIT_PRODUCT_RESET} from '../../Reducer/constants'
-const AllProducts = () => {
+const Allusers = () => {
    
-    const {product,loading,error} = useSelector(state=>state.productList);
-    const {success,error:error1} = useSelector(state=>state.createProductReducer);
+    const {users,loading,error,success} = useSelector(state=>state.AdminReducer);
     let[message,setMessage] = useState(null);
-    
-   const dispatch  = useDispatch();
-   const [page,setPage] = useState(1);
 
-   let previoushandler = ()=>{
-       setPage(page-1);
-   }
-   let nexthandler = ()=>{
-    setPage(page+1);
-}
+    const [page,setPage] = useState(1);
+
+    let previoushandler = ()=>{
+        setPage(page-1);
+    }
+    let nexthandler = ()=>{
+     setPage(page+1);
+ }
+
+   const dispatch  = useDispatch();
     useEffect(()=>{
        
-        if(!loading || success)
-      dispatch(listProduct('',page,10));
-
-      
+        if(!loading)
+      dispatch(getAllusers(page,10));
     },[dispatch,success,page]);
    // console.log(users);
     let deletehandler=(id)=>{
-if(window.confirm('Are you sure ??'))
-       dispatch( deleteproduct(id));
+        if(window.confirm('Are you sure ??'))
+        dispatch(deleteuser(id));
     }
 
     useEffect(()=>{
-     if(error||error1){
-         setMessage(error?error:error1);
+     if(error){
+         setMessage(error);
      }
-     if(success){
-         setMessage('product deleted successfully')
-         dispatch({type:ADMIN_EDIT_PRODUCT_RESET})
-     }
-    },[error,success,error1])
+    },[error])
   let handler = ()=>{
       setMessage(null);
   }
@@ -55,39 +49,36 @@ if(window.confirm('Are you sure ??'))
         variants={NestedAnimation}
         transition={PageTransition}
         >
-          <>
-          {
-               message?<Indicator message={message} handler={handler}color='alert-danger' /> :null
-          }
-          </>
+     {
+        loading ?<Loader />:error?<Indicator message={message} handler={handler}color='alert-danger' />
+        :( <>
             <Table striped bordered hover responsive className='table-sm'>
                 <thead>
                     <tr>
                         <th>S.no</th>
                         <th>Name</th>
-                        <th>CATEGORY</th>
-                        <th>BRAND</th>
-                        <th>PRICE</th>
-                        <th className="d-flex justify-content-center"><LinkContainer to={`/admin/product/create`}>
-                        <Button variant='success' className='btn-sm'><i className='fas fa-plus'>Add Product</i></Button>
-                        </LinkContainer></th>
+                        <th>Email</th>
+                        <th>Admin</th>
+                        <th></th>
                        
                     </tr>
                 </thead>
 
                 <tbody>
                     {
-                        product.map((el,i)=>{
-                           return (           
+                        users.map((el,i)=>{
+                           return (
                             <tr key={el._id}>
                             <td>{i+1}</td>
                             <td>{el.name}</td>
-                            <td>{el.category}</td>
-                            <td>{el.brand}</td>
-                            <td> {el.price}</td>
+                            <td>{el.email}</td>
+                            <td>{
+                                el.role === 'admin'?<i className='fas fa-check' style={{color:'green'}}></i>
+                                                   :<i className='fas fa-times' style={{color:'red'}}></i>
+                                }</td>
 
-                                <td className='d-flex justify-content-around'>
-                                    <LinkContainer to={`/admin/product/${el._id}/edit`}>
+                                <td className='d-flex justify-content-between'>
+                                    <LinkContainer to={`/admin/user/${el._id}/edit`}>
                                     <Button variant='warning' className='btn-sm'><i className='fas fa-edit'></i></Button>
                                     </LinkContainer>
                                     <Button variant='danger' className='btn-sm' onClick={()=>deletehandler(el._id)}>
@@ -106,14 +97,15 @@ if(window.confirm('Are you sure ??'))
          <Col  xs={6} md={2}><button style={{width:'100%',padding:'10px', border:'1px solid black'}} disabled={page==1} onClick={previoushandler} >Previous</button></Col>
         }
          {
-      <Col  xs={6} md={2}><button style={{width:'100%',padding:'10px', border:'1px solid black'}} disabled={product?.length<10} onClick={nexthandler} >Next</button></Col>
+      <Col  xs={6} md={2}><button style={{width:'100%',padding:'10px', border:'1px solid black'}} disabled={users?.length<10} onClick={nexthandler} >Next</button></Col>
          }
      </Row> 
-        
-     
+            </>
+        )
+     }
         
         </motion.div>
     )
 }
 
-export default AllProducts;
+export default Allusers
