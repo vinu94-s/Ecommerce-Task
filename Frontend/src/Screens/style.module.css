@@ -1,0 +1,53 @@
+.btncolor{
+    color: black;
+    border-radius: 10px;
+    background-color: #ffbf00;
+    
+    
+}
+
+.rowup{
+   
+    background-color:white;
+    border-radius: 0.2em;
+    height:95vh;
+    margin:2px;
+    padding:4px;
+    position: relative;
+    overflow:auto;
+    
+}
+
+
+
+.remove{
+   
+    text-decoration: none;
+    padding: 0.4em;
+    font-size:medium;
+    transition: 0.5s ease-Out;
+    color:whitesmoke;
+   
+}
+.remove:hover{
+    margin-right: 2em;
+    border-left: 6px solid white;
+  
+   
+    transition: 0.5s ease-out;
+
+}
+a:hover{
+    color:whitesmoke;
+}
+
+
+.active{
+   
+    margin-right: 2em;
+    border-left: 6px solid white;
+    
+    color:blanchedalmond;
+    transition: 0.4s ease-out;
+  
+}
